@@ -45,8 +45,18 @@ func _process(delta):
 
 
 # Función que se activa al detectar una colisión con el suelo u otro objeto
-func _on_Area2D_area_entered(area):
-	if jumping and area.is_in_group("ground"): # Asegúrate de que los objetos del TileMap estén en un grupo llamado "ground"
-		$PlayerAnimation.play("Nueva Animación")
-		jumping = false
+
+	
+
+
+func _on_Area2D_body_entered(body):
+	#if jumping and area.is_in_group("ground"): # Asegúrate de que los objetos del TileMap estén en un grupo llamado "ground"
+	if body.is_in_group("ground") and jumping:
 		velocity.y = 0
+		jumping = false
+	
+	else :
+		if body.is_in_group("ground"):
+			$PlayerAnimation.play("Nueva Animación")
+			jumping = false
+			velocity.y = 0
