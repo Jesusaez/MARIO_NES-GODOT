@@ -1,62 +1,64 @@
-extends Sprite
+extends KinematicBody2D
 
-export var speed = 400 # Velocidad de movimiento del jugador.
-export var jump_speed = 500 # Velocidad del salto
-var gravity = 1000 # Fuerza de gravedad
-var jumping = false
+signal PlayerMoved
+
+export var speed = 400
+export var jump_speed = 900
+export var gravity = 1500
 var velocity = Vector2.ZERO
-var screen_size
+var camara
+var player
+var spritePlayer
 
 func _ready():
-	screen_size = get_viewport_rect().size
-	$Area2D.connect("area_entered", self, "_on_area_entered")
+	camara = $Camera2D
+	player = $"."
+	spritePlayer = $AnimatedSprite
+	camara.drag_margin_top = 10
+	
+	if spritePlayer == null:
+		print("Error: Nodo AnimationPlayer no encontrado")
+		
 
-func _process(delta):
+func _physics_process(delta):
+	velocity.y += gravity * delta
 	velocity.x = 0
+	#print(player.position.x)
+	#if camara.limit_left >= camara.get_camera_position().x:
+		#camara.limit_left = camara.get_camera_position().x-200
+	if player.position.x <= camara.limit_left+30:
+		player.position.x = camara.limit_left+30
 	
 	if Input.is_action_pressed("move_right"):
-		velocity.x += speed
-		flip_h = false
-	if Input.is_action_pressed("move_left"):
-		velocity.x -= speed
-		flip_h = true
-
-
-	if Input.is_action_just_pressed("jump") and not jumping:
-		jumping = true
-		velocity.y = -jump_speed
-		yield(get_tree().create_timer(1.0), "timeout") 
-
-	# Aplica la gravedad cuando está en el aire
-	if jumping:
-		velocity.y += gravity * delta # Aumenta la velocidad en Y por gravedad
-
+		if Input.is_action_pressed("run"):
+			velocity.x += speed*1.5
+			spritePlayer.flip_h = false
+			spritePlayer.play("run2")
 	
-	if velocity.x != 0 and not jumping:
-		$PlayerAnimation.play("walk_right")
-	elif jumping:
-		$PlayerAnimation.play("jump")
+		else: 
+			velocity.x += speed
+			spritePlayer.flip_h = false
+			spritePlayer.play("walk")
+		#$Camera2D.limit_left = $".".position.x-600
+	elif Input.is_action_pressed("move_left"):
+		if Input.is_action_pressed("run"):
+			velocity.x -= speed*1.5
+			spritePlayer.flip_h = true
+			spritePlayer.play("run2")
+		else:	
+			velocity.x -= speed
+			spritePlayer.flip_h = true
+			spritePlayer.play("walk")
+	
 	else:
-		$PlayerAnimation.play("Nueva Animación") # Animacon por defecto
+		if is_on_floor():
+			spritePlayer.play("default")
+	if velocity.x!=0:
+		emit_signal("PlayerMoved")
 
-	position += velocity * delta
-	position.x = clamp(position.x, 0, screen_size.x)
-	position.y = clamp(position.y, 0, screen_size.y)
-
-
-# Función que se activa al detectar una colisión con el suelo u otro objeto
-
+	if Input.is_action_just_pressed("jump") and is_on_floor():
+		velocity.y = -jump_speed
+	if !is_on_floor():
+		spritePlayer.play("jump")
 	
-
-
-func _on_Area2D_body_entered(body):
-	#if jumping and area.is_in_group("ground"): # Asegúrate de que los objetos del TileMap estén en un grupo llamado "ground"
-	if body.is_in_group("ground") and jumping:
-		velocity.y = 0
-		jumping = false
-	
-	else :
-		if body.is_in_group("ground"):
-			$PlayerAnimation.play("Nueva Animación")
-			jumping = false
-			velocity.y = 0
+	velocity = move_and_slide(velocity, Vector2.UP)
