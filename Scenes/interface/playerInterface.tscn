@@ -1,24 +1,49 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Scripts/playerInterface.gd" type="Script" id=1]
 [ext_resource path="res://font/super-mario-bros-nes.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://spritesheets/items/items.png" type="Texture" id=3]
 
 [sub_resource type="DynamicFont" id=1]
 font_data = ExtResource( 2 )
 
+[sub_resource type="AtlasTexture" id=2]
+atlas = ExtResource( 3 )
+region = Rect2( 4, 640, 20, 32 )
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 3 )
+region = Rect2( 36, 640, 20, 32 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 3 )
+region = Rect2( 68, 640, 20, 32 )
+
+[sub_resource type="SpriteFrames" id=5]
+animations = [ {
+"frames": [ SubResource( 2 ), SubResource( 2 ), SubResource( 3 ), SubResource( 4 ), SubResource( 3 ) ],
+"loop": true,
+"name": "default",
+"speed": 6.0
+} ]
+
 [node name="Control" type="Node2D"]
 script = ExtResource( 1 )
 
-[node name="points" type="Label" parent="."]
-margin_left = 71.0
-margin_top = 30.0
-margin_right = 151.0
-margin_bottom = 44.0
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+scale = Vector2( 0.9, 0.9 )
+transform = Transform2D( 0.9, 0, 0, 0.9, 0, 0 )
+
+[node name="points" type="Label" parent="CanvasLayer"]
+margin_left = 131.111
+margin_top = 41.1111
+margin_right = 211.111
+margin_bottom = 59.1111
 rect_scale = Vector2( 1.7, 1.7 )
 custom_fonts/font = SubResource( 1 )
 text = "MARIO"
 
-[node name="pointsCont" type="Label" parent="points"]
+[node name="pointsCont" type="Label" parent="CanvasLayer/points"]
 margin_left = 2.0
 margin_top = 16.0
 margin_right = 47.0
@@ -26,15 +51,15 @@ margin_bottom = 30.0
 custom_fonts/font = SubResource( 1 )
 text = "0000000"
 
-[node name="coins" type="Label" parent="."]
-margin_left = 330.0
-margin_top = 62.0
-margin_right = 346.0
-margin_bottom = 80.0
+[node name="coins" type="Label" parent="CanvasLayer"]
+margin_left = 416.778
+margin_top = 73.3333
+margin_right = 432.778
+margin_bottom = 91.3333
 custom_fonts/font = SubResource( 1 )
 text = "x"
 
-[node name="coinsCont" type="Label" parent="coins"]
+[node name="coinsCont" type="Label" parent="CanvasLayer/coins"]
 margin_left = 18.0
 margin_top = -8.0
 margin_right = 95.0
@@ -43,16 +68,21 @@ rect_scale = Vector2( 2, 2 )
 custom_fonts/font = SubResource( 1 )
 text = "00"
 
-[node name="world" type="Label" parent="."]
-margin_left = 569.0
-margin_top = 30.0
-margin_right = 647.0
-margin_bottom = 53.0
+[node name="AnimatedSprite" type="AnimatedSprite" parent="CanvasLayer/coins"]
+position = Vector2( -17, 9 )
+frames = SubResource( 5 )
+playing = true
+
+[node name="world" type="Label" parent="CanvasLayer"]
+margin_left = 629.111
+margin_top = 41.1111
+margin_right = 709.111
+margin_bottom = 64.1111
 rect_scale = Vector2( 1.7, 1.7 )
 custom_fonts/font = SubResource( 1 )
 text = "WORLD"
 
-[node name="worldCont" type="Label" parent="world"]
+[node name="worldCont" type="Label" parent="CanvasLayer/world"]
 margin_left = 13.5294
 margin_top = 17.0588
 margin_right = 61.5294
@@ -61,19 +91,19 @@ custom_fonts/font = SubResource( 1 )
 text = "1-1"
 align = 1
 
-[node name="time" type="Label" parent="."]
-margin_left = 827.0
-margin_top = 30.0
-margin_right = 869.0
-margin_bottom = 48.0
+[node name="time" type="Label" parent="CanvasLayer"]
+margin_left = 887.111
+margin_top = 41.1111
+margin_right = 951.111
+margin_bottom = 59.1111
 rect_scale = Vector2( 1.7, 1.7 )
 custom_fonts/font = SubResource( 1 )
 text = "TIME"
 
-[node name="Timer" type="Timer" parent="time"]
+[node name="Timer" type="Timer" parent="CanvasLayer/time"]
 autostart = true
 
-[node name="timeCont" type="Label" parent="time"]
+[node name="timeCont" type="Label" parent="CanvasLayer/time"]
 anchor_right = 0.5
 margin_left = 9.41177
 margin_top = 15.8824
@@ -82,4 +112,4 @@ margin_bottom = 33.8824
 custom_fonts/font = SubResource( 1 )
 text = "400"
 
-[connection signal="timeout" from="time/Timer" to="." method="_on_Timer_timeout"]
+[connection signal="timeout" from="CanvasLayer/time/Timer" to="." method="_on_Timer_timeout"]

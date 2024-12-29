@@ -19,7 +19,7 @@ func _on_EndGame():
 	print("Se recibió la señal EndGame")
 
 func _on_PlayerMoved():
-	$Control.position.x = player_scene.position.x
+	$Control.position.x = player_scene.camara.position.x
 	# Aquí puedes cambiar de escena, mostrar un mensaje, etc.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
