@@ -3,7 +3,7 @@
 <a href="#installation">Instalacio</a> &nbsp;&bull;&nbsp;
 <a href="#usage">Joc</a> &nbsp;&bull;&nbsp;
 <a href="#documentation">Documentation</a> &nbsp;&bull;&nbsp;
-<a href="#issue">Issue?</a>
+<a href="#issue">Problemes?</a>
 </p>
 
 # Introduccio
@@ -29,7 +29,7 @@ Qualsevol bug que es trobeu ficarlo en comentaris.
 Tots els sprites son trets de internet de <a href="https://www.spriters-resource.com">The Spriters Resource<a/>
 y la documentacio del godot per algun error es la seguent <a href="https://docs.godotengine.org/en/stable/">Godot<a/>
 
-## Issue
+## Problemes?
 Qualsevol error ficarlo en comentaris del Github
 
 <h4>T'ha agradat el joc?</h4>
