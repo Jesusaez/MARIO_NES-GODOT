@@ -1,7 +1,7 @@
 extends KinematicBody2D
 
 export var speed = 400
-export var jump_speed = 1500
+export var jump_speed = 1600
 export var gravity = 4200
 var velocity = Vector2.ZERO
 var camara
@@ -15,7 +15,12 @@ var max_speed = speed * 1.5
 var accel = 365
 var decel = 280
 var interface
-
+signal killEnemy
+signal playerDead
+signal coinBlock
+signal mushBlock
+signal brickBlock
+signal win
 
 func _ready():
 	camara = $Camera2D
@@ -56,14 +61,35 @@ func animaciones():
 		spritePlayer.play("default")
 
 func colisioGoomba(collision):
-	var normal = collision.get_normal()
-	if normal.y < -0.9:
-		normal.spritePlayer.play("die")
-		print("mamaguebo glugluglu")
-		collision.collider.queue_free()
-		velocity.y = 50
-	elif abs(normal.x) > 0.5:
-		morir()
+	if collision.collider.is_in_group("enemy"):
+		var normal = collision.get_normal()
+		if normal.y < -0.9:  # Colisión desde arriba
+			emit_signal("killEnemy", collision.collider)  # Emite la señal y pasa el enemigo como argumento
+			collision.collider.queue_free()  # Elimina al enemigo
+			velocity.y = -jump_speed/2
+		else:  # Colisión por cualquier otro lado
+			morir()
+
+func colisioFlag(collision):
+	if collision.collider.is_in_group("flag"):
+		emit_signal("win", collision.collider)  # Emite la señal y pasa el enemigo como argumento
+
+
+func colisioCoinBlock(collision):
+	if collision.collider.is_in_group("coinBlock"):  # Comprueba si es un coinBlock
+		var normal = collision.get_normal()
+		
+		if normal.y > 0.9:  # Colisión desde abajo
+			emit_signal("coinBlock", collision.collider)  # Emite la señal y pasa el bloque como argumento
+		# Si no hay colisión desde abajo, no hace nada
+
+func colisioBrickBlock(collision):
+	if collision.collider.is_in_group("brickBlock"):  # Comprueba si es un coinBlock
+		var normal = collision.get_normal()
+		
+		if normal.y > 0.9:  # Colisión desde abajo
+			emit_signal("brickBlock", collision.collider)  # Emite la señal y pasa el bloque como argumento
+		# Si no hay colisión desde abajo, no hace nada
 
 func accel_deccel():
 	if velocity.x>0 && is_on_floor():
@@ -129,42 +155,51 @@ func morir():
 	velocity.y = -jump_speed
 	die=true
 	remove_child($CollisionShape2D)
-	#yield(get_tree().create_timer(2.0), "timeout")
-	
+	yield(get_tree().create_timer(3.0), "timeout")
+	emit_signal("playerDead") 
+
 func _physics_process(delta):
 	velocity.y += gravity * delta
-	if die==false:
-		
+	if die == false:
 		animaciones()
 		
-		if velocity.x <=5 && velocity.x >=-5:
-			velocity.x=0
+		if velocity.x <= 5 and velocity.x >= -5:
+			velocity.x = 0
 		
-		velocity=movimiento2(delta,velocity)
+		velocity = movimiento2(delta, velocity)
 		
-		#colisiones()
-		
-		for i in range(get_slide_count()):  # Corregido para iterar correctamente
+		# Detectar y manejar colisiones
+		for i in range(get_slide_count()):
 			var collision = get_slide_collision(i)
+			
+			# Detectar colisión con enemigos (gomba)
 			if collision.collider.name.begins_with("gomba"):
 				colisioGoomba(collision)
-			#if collision.collider.name.begins_with("Box"):
-				#collisioCapsa(collision)
 			
-		velocity.x=round(velocity.x)
+			# Detectar colisión con bloques de monedas
+			if collision.collider.is_in_group("coinBlock"):
+				colisioCoinBlock(collision)
+				
+			if collision.collider.is_in_group("brickBlock"):
+				colisioBrickBlock(collision)
+			
+			if collision.collider.is_in_group("flag"):
+				colisioFlag(collision)
+			
 		
-		#Control para no salirse del mapa
+		velocity.x = round(velocity.x)
+		
+		# Control para no salirse del mapa
 		if $".".position.x <= 20:
-			$".".position.x=20
-			velocity.x=1
-		elif position.y>=600:
+			$".".position.x = 20
+			velocity.x = 1
+		elif position.y >= 600:
 			morir()
 	else:
-		velocity.x=0
-	
+		velocity.x = 0
 	
 	velocity = move_and_slide(velocity, Vector2.UP)
-	#colision = move_and_collide((-Vector2.UP/8)*speed*delta)
+
 	
 
 
