@@ -1,9 +1,9 @@
 <p align="center">
-<a href="#introduction">Introduccio</a> &nbsp;&bull;&nbsp;
-<a href="#installation">Instalacio</a> &nbsp;&bull;&nbsp;
-<a href="#usage">Joc</a> &nbsp;&bull;&nbsp;
-<a href="#documentation">Documentation</a> &nbsp;&bull;&nbsp;
-<a href="#issue">Problemes?</a>
+<a href="#Introduccio">Introduccio</a> &nbsp;&bull;&nbsp;
+<a href="#Instalacio">Instalacio</a> &nbsp;&bull;&nbsp;
+<a href="#Joc">Joc</a> &nbsp;&bull;&nbsp;
+<a href="#Documentacio">Documentacio</a> &nbsp;&bull;&nbsp;
+<a href="#Problemes">Problemes?</a>
 </p>
 
 # Introduccio
